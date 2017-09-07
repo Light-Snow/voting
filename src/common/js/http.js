@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-
+import { Indicator } from 'mint-ui'
 /**
  * get请求
  * @param  {String} options.server 服务器域名
@@ -37,6 +37,12 @@ const _get = (api, query) => {
  * @return {Promise}        Promise
  */
 const _post = (api, params) => {
+  // axios的请求时间
+  // let axiosDate = new Date()
+  // Indicator.open({
+  //   text: '加载中...',
+  //   spinnerType: 'triple-bounce'
+  // })
   const _url = `${api}`
 //  console.log(_url)
 //  console.log('params: ', params)
@@ -44,9 +50,19 @@ const _post = (api, params) => {
   console.log(data)
   return axios.post(_url, data).then((res) => {
 //    console.log('axios.post[then]: ', res)
+    // 关闭  loading图片消失
+    // let oDate = new Date()
+    // let time = oDate.getTime() - axiosDate.getTime()
+    // if (time < 500) time = 500
+    // setTimeout(() => {
+    //   Indicator.close()
+    // }, time)
     return res
   }, (errorRes) => {
 //    console.log('axios.post[error]: ', errorRes)
+    // 关闭  loading图片消失
+    // Indicator.close()
+    // axiosDate = new Date()
     return Promise.reject(errorRes)
   })
   .catch((error) => {

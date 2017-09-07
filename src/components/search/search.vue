@@ -1,5 +1,5 @@
 <template>
-  <div class="search" :style="{'-webkit-overflow-scrolling': scrollMode}">
+  <div class="search">
     <div class="search-top">
       <input ref="searchInput" class="search-text" v-model.trim="searchText" @blur="searchInfo"  type="search" placeholder="请输入用户名、手机号、编号" maxlength="100">
       <span class="search-btn" @click="searchInfo"></span>
@@ -102,6 +102,9 @@
           } else if (res.data.status === '2') {
 //            this.activityId = res.data.data.id
 //            this.activityExpire = true
+            this.activityIntroduceText = res.data.data.activityIntroduceText
+            let gzTopLogo = res.data.data.gzTopLogo
+            this.getIndexShareData(gzTopLogo) // 分享首页
           } else {
             this.$router.replace({name: 'ActivityEnd'})
           }

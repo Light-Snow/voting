@@ -14,7 +14,6 @@
               infinite-scroll-disabled="loading"
               infinite-scroll-distance="40"
               :infinite-scroll-immediate-check="isLoadMore"
-              :style="{'-webkit-overflow-scrolling': scrollMode}"
           >
             <li class="clearFix" v-for="(item,index) in rankList" @click.stop="goPetDetail(item.id,item.joinNumber)">
               <div class="logo-box">
@@ -72,14 +71,10 @@
       }
     },
     mounted() {
-//      this.getActivityInfo() // 获取活动信息
-//      this.$nextTick(function () {
-//        this.getRankList()
-//      })
-    },
-    activated() {
       this.getActivityInfo() // 获取活动信息
-      this.getRankList()
+      this.$nextTick(function () {
+        this.getRankList()
+      })
     },
     computed: {
       isLoadMore() {
@@ -105,6 +100,9 @@
 //            Toast('活动到期')
             this.activityId = res.data.data.id
 //            this.activityExpire = true
+            this.activityIntroduceText = res.data.data.activityIntroduceText // 活动文案
+            let gzTopLogo = res.data.data.gzTopLogo
+            this.getIndexShareData(gzTopLogo) // 分享首页
           } else {
 //            Toast('活动结束')
             this.$router.replace({name: 'ActivityEnd'})
@@ -199,6 +197,7 @@
               console.log(this.currentPage)
               let petList = res.data.data
               this.rankList = this.rankList.concat(petList)
+              this.loading = false // 隐藏加载图标
               console.log(petList)
               this.$nextTick(function () {
                 // 这里之所以加是因为有个坑，iphone在使用-webkit-overflow-scrolling属性，就是移动端弹性滚动效果时会屏蔽loadmore的上拉加载效果，
@@ -250,7 +249,7 @@
       }
     }
     .rank-con{
-      width 100%;
+      width 100%; padding-bottom 125px;
       .con-img{
         display block; width 100%; height 196px;
         background-image url("../../assets/images/rank_img.png");
@@ -264,7 +263,7 @@
         background-size 100% auto;
       }
       .pet-list{
-        width 100%; padding 50px 7.1% 125px;
+        width 100%; padding 50px 7.1% 0;
         .page-infinite-loading {
           text-align: center;
           line-height: 50px;

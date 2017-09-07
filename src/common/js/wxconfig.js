@@ -121,41 +121,6 @@ export default function wxShare(shareObj, currentUrl) {
     })
   }
 }
-export function hideWXRightTop (hide) {
-  // alert(hide)
-  // alert(isWeiXin)
-  if (isWeiXin) {
-    if (!hide) {
-      // 显示右上角菜单接口
-      wx.showOptionMenu()
-      // wx.ready(function () {
-      //   wx.showMenuItems({
-      //     menuList: [
-      //       'menuItem:share:appMessage', // 发送给朋友
-      //       'menuItem:share:timeline', // 分享到朋友圈
-      //       'menuItem:share:qq' // 分享到QQ
-      //     ] // 要显示的菜单项，所有menu项见附录3
-      //   })
-      // })
-    } else {
-      // 隐藏右上角菜单接口
-      wx.hideOptionMenu()
-      // wx.ready(function () {
-      //   alert('隐藏内容')
-      //   wx.hideMenuItems({
-      //     menuList: [
-      //       'menuItem:share:appMessage', // 发送给朋友
-      //       'menuItem:share:timeline', // 分享到朋友圈
-      //       'menuItem:share:qq', // 分享到QQ
-      //       'menuItem:share:weiboApp', // 分享到Weibo
-      //       'menuItem:share:facebook', // 分享到FB
-      //       'menuItem:share:QZone' // 分享到 QQ 空间
-      //     ] // 要隐藏的菜单项，所有menu项见附录3
-      //   })
-      // })
-    }
-  }
-}
 export function getLocation () {
   if (isWeiXin) {
     if (typeof wx === 'undefined') return

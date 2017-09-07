@@ -18,7 +18,7 @@
       <div class="list-tab clearFix">
         <div class="type-list">
           <div class="checked" @click="toggleList">{{typeName}}<i></i></div>
-          <ul v-show="typeList">
+          <ul v-show="typeList" v-cloak>
             <li v-for="(type,index) in typeListName" @click="checkType(index)" :class="typeName===type.name?'active':''">{{type.name}}</li>
           </ul>
         </div>
@@ -35,9 +35,10 @@
             v-infinite-scroll="loadMore"
             infinite-scroll-disabled="loading"
             infinite-scroll-distance="40"
+            :infinite-scroll-immediate-check="isLoadMore"
         >
           <li v-for="(item, index) in petList">
-            <router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">
+            <div  class="animal-info" @click="goPetDetail(item.id,item.joinNumber)">
               <i class="flag" :class="{'wang':item.belongTag==='1','miao': item.belongTag==='2'}"></i>
               <span class="petTopPic">
                 <img v-lazy="'/pet/'+item.petTopPic"  alt="">
@@ -46,7 +47,9 @@
                 <span class="num">{{item.joinNumber}}号</span>
                 <span class="poll">{{item.voteNumber}}票</span>
               </p>
-            </router-link>
+            </div>
+            <!--<router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">-->
+            <!--</router-link>-->
             <template v-if="item.id===votedPetID||item.dayVisitFlag==='0'">
               <div class="vote-btn voted" ></div>
             </template>
@@ -63,7 +66,6 @@
           数据已加载完
         </p>
       </mt-loadmore>
-
     </div>
 
     <tab></tab>
@@ -86,6 +88,7 @@
         headPic: '../../assets/images/banner.jpg', // 头图地址
         subscribe: '', // 是否关注
         isApply: false, // 是否报名
+        isHot: '', // 是否是最热
         typeName: '全部', // 动物类型
         typeList: false, // 动物类型下拉框是否显示
         typeListName: [
@@ -112,12 +115,27 @@
       this.getOpenId() // 获取openId
       this.getActivityInfo() // 获取活动信息
       this.$nextTick(function () {
-//        this._getPetList()
+        this._getPetList()
+      })
+    },
+    activated() {
+      this.getOpenId() // 获取openId
+      this.getActivityInfo() // 获取活动信息
+      this.$nextTick(function () {
+        this._getPetList()
       })
     },
     computed: {
+      isLoadMore() {
+        return (this.petList.length > 5) ? 'true' : 'false'
+      }
     },
     methods: {
+      goPetDetail(pid, num) {
+        if (this.topStatus === 'pull') {
+          this.$router.push({name: 'PetDetail', params: { pid: pid, num: num }})
+        }
+      },
       goApply() {
         if (!this.activityExpire) {
           this.$router.push({name: 'Apply'})
@@ -166,6 +184,8 @@
             this.activityId = res.data.data.id
             this.headPic = res.data.data.headPic // 头图地址banner
             this.activityIntroduceText = res.data.data.activityIntroduceText // 活动文案
+            let gzTopLogo = res.data.data.gzTopLogo
+            this.getIndexShareData(gzTopLogo) // 分享首页
           } else {
 //            Toast('活动结束')
             this.$router.replace({name: 'ActivityEnd'})
@@ -241,8 +261,11 @@
         this._getPetList()
       },
       checkRankType(type) {
-        this.belongTag = ''
-        this.typeName = '全部'
+        if (type === 'findPetHotList') {
+          this.isHot = 'hot'
+        }
+//        this.belongTag = ''
+//        this.typeName = '全部'
         this.rankType = type
         this._clearData() // 清除数据
         this._getPetList()
@@ -306,7 +329,7 @@
         }
       },
       _getPetList() {
-        console.log('nomore', this.noMore)
+//        console.log('nomore', this.noMore)
         if (this.noMore) {
           this.loading = false // 将不再执行loadmore
           return false
@@ -317,7 +340,8 @@
           belongTag: this.belongTag, // 宠物标签（1代表汪星人，2代表喵星人，3代表其它,全部为空）
           start: this.currentPage, // 起始页
           pageSize: this.pageSize, // 页显示数
-          voterOpenId: this.userOpenId
+          voterOpenId: this.userOpenId,
+          orderFlag: this.isHot
         }).then((res) => {
           console.log(res.data)
           if (res.data.status === '-1') {
@@ -443,11 +467,13 @@
           -moz-text-shadow: #fff2bb 2px 0 0,#fff2bb 0 2px 0,#fff2bb -2px 0 0,#fff2bb 0 -2px 0;
           filter: Glow(color=#fff2bb, strength=2);
           white-space:nowrap;
-          -webkit-animation: rowleft 10s  linear infinite normal;
-          animation: rowleft 10s linear infinite normal;
+          animation: rowleft 10s linear 0 infinite normal;
+          -webkit-animation: rowleft 10s  linear 0 infinite normal;
+          -moz-animation: rowleft 10s  linear 0 infinite normal;
+          -ms-animation: rowleft 10s  linear 0 infinite normal;
+          -o-animation: rowleft 10s  linear 0 infinite normal;
     .list-box
       width 100%
-      min-height 500px
       padding 0 0 125px 0
       background-image url("../../assets/images/home_bg.png")
       background-repeat repeat-y
@@ -600,69 +626,69 @@
       }
   @keyframes rowleft {
     0%{
-      transform : translate3D(99%,0,0)
-      -ms-transform:translate3D(99%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(99%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(99%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(99%,0,0); 	/* Opera */
+      transform : translate(99%,0)
+      -ms-transform:translate(99%,0); 	/* IE 9 */
+      -moz-transform:translate(99%,0); 	/* Firefox */
+      -webkit-transform: translate(99%,0); /* Safari 和 Chrome */
+      -o-transform:translate(99%,0); 	/* Opera */
     }
     100%{
-      transform : translate3D(-100%,0,0)
-      -ms-transform:translate3D(-100%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(-100%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(-100%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(-100%,0,0); 	/* Opera */
+      transform : translate(-100%,0)
+      -ms-transform:translate(-100%,0); 	/* IE 9 */
+      -moz-transform:translate(-100%,0); 	/* Firefox */
+      -webkit-transform: translate(-100%,0); /* Safari 和 Chrome */
+      -o-transform:translate(-100%,0); 	/* Opera */
       display none
     }
   }
   @-moz-keyframes rowleft {
     0%{
-      transform : translate3D(99%,0,0)
-      -ms-transform:translate3D(99%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(99%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(99%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(99%,0,0); 	/* Opera */
+      transform : translate(99%,0)
+      -ms-transform:translate(99%,0); 	/* IE 9 */
+      -moz-transform:translate(99%,0); 	/* Firefox */
+      -webkit-transform: translate(99%,0); /* Safari 和 Chrome */
+      -o-transform:translate(99%,0); 	/* Opera */
     }
     100%{
-      transform : translate3D(-100%,0,0)
-      -ms-transform:translate3D(-100%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(-100%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(-100%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(-100%,0,0); 	/* Opera */
+      transform : translate(-100%,0)
+      -ms-transform:translate(-100%,0); 	/* IE 9 */
+      -moz-transform:translate(-100%,0); 	/* Firefox */
+      -webkit-transform: translate(-100%,0); /* Safari 和 Chrome */
+      -o-transform:translate(-100%,0); 	/* Opera */
       display none
     }
   }
   @-webkit-keyframes rowleft {
     0%{
-      transform : translate3D(99%,0,0)
-      -ms-transform:translate3D(99%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(99%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(99%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(99%,0,0); 	/* Opera */
+      transform : translate(99%,0)
+      -ms-transform:translate(99%,0); 	/* IE 9 */
+      -moz-transform:translate(99%,0); 	/* Firefox */
+      -webkit-transform: translate(99%,0); /* Safari 和 Chrome */
+      -o-transform:translate(99%,0); 	/* Opera */
     }
     100%{
-      transform : translate3D(-100%,0,0)
-      -ms-transform:translate3D(-100%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(-100%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(-100%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(-100%,0,0); 	/* Opera */
+      transform : translate(-100%,0)
+      -ms-transform:translate(-100%,0); 	/* IE 9 */
+      -moz-transform:translate(-100%,0); 	/* Firefox */
+      -webkit-transform: translate(-100%,0); /* Safari 和 Chrome */
+      -o-transform:translate(-100%,0); 	/* Opera */
       display none
     }
   }
   @-o-keyframes rowleft {
     0%{
-      transform : translate3D(99%,0,0)
-      -ms-transform:translate3D(99%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(99%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(99%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(99%,0,0); 	/* Opera */
+      transform : translate(99%,0)
+      -ms-transform:translate(99%,0); 	/* IE 9 */
+      -moz-transform:translate(99%,0); 	/* Firefox */
+      -webkit-transform: translate(99%,0); /* Safari 和 Chrome */
+      -o-transform:translate(99%,0); 	/* Opera */
     }
     100%{
-      transform : translate3D(-100%,0,0)
-      -ms-transform:translate3D(-100%,0,0); 	/* IE 9 */
-      -moz-transform:translate3D(-100%,0,0); 	/* Firefox */
-      -webkit-transform: translate3D(-100%,0,0); /* Safari 和 Chrome */
-      -o-transform:translate3D(-100%,0,0); 	/* Opera */
+      transform : translate(-100%,0)
+      -ms-transform:translate(-100%,0); 	/* IE 9 */
+      -moz-transform:translate(-100%,0); 	/* Firefox */
+      -webkit-transform: translate(-100%,0); /* Safari 和 Chrome */
+      -o-transform:translate(-100%,0); 	/* Opera */
       display none
     }
   }

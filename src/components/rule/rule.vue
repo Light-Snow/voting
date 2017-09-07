@@ -50,6 +50,8 @@
             this.activityId = res.data.data.id
             this.activityIntroduceText = res.data.data.activityIntroduceText // 活动文案
 //            this.activityExpire = true
+            let gzTopLogo = res.data.data.gzTopLogo
+            this.getIndexShareData(gzTopLogo) // 分享首页
           } else {
             this.$router.replace({name: 'ActivityEnd'})
           }

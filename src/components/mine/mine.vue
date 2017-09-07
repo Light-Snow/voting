@@ -1,6 +1,6 @@
 <template>
-  <div class="mine">
-    <div v-show="isApply === '1'">
+  <div class="mine" v-cloak>
+    <div v-if="isApply === '1'" v-cloak>
       <div class="pet-top">
         <div class="share-near" v-show="!activityExpire">
           <a href="javascript:;"  class="share" @click="sureShare">
@@ -60,9 +60,9 @@
         <img :src="previewImg" alt="">
       </div>
     </div>
-    <mine-not-apply v-show="isApply === '0'"
+    <mine-not-apply v-if="isApply === '0'"
                     :nick-name="userNickName"
-                    :is-expire="activityExpire">
+                    :is-expire="activityExpire"  v-cloak>
     </mine-not-apply>
     <tab></tab>
   </div>
@@ -414,7 +414,7 @@
         }
       }
       .wei-name{
-        width 80%; margin 0 auto; font-size 28px;/*px*/ color #fff; line-height 70px; text-align center;
+        width 80%; height 70px; margin 0 auto; font-size 28px;/*px*/ color #fff; line-height 70px; text-align center;
         no-wrap()
       }
     }
@@ -467,6 +467,7 @@
           background-size 540px 260px;
         }
         p{
+          min-height 64px;
           padding 0 0 18px 0
           font-size 26px;/*px*/ color #ff895b; line-height 46px;
           word-break : break-all;
@@ -474,12 +475,11 @@
       }
       .video-box{
         position relative;
-        width 100%;
+        width 100%; min-height 190px; height auto;
         /*height 190px;*/
         border 2px solid #ffd964;/*px*/
         margin-bottom 20px;
         video{
-          position relative; z-index 1;
           display block
           width 100%; height 100%;
           /*background:transparent url('../../assets/images/gou.jpg') 50% 50% no-repeat;*/

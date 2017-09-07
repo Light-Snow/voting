@@ -180,6 +180,9 @@
           } else if (res.data.status === '2') {
 //            this.activityId = res.data.data.id
 //            this.activityExpire = true
+            this.activityIntroduceText = res.data.data.activityIntroduceText
+            let gzTopLogo = res.data.data.gzTopLogo
+            this.getIndexShareData(gzTopLogo) // 分享首页
           } else {
             this.$router.replace({name: 'ActivityEnd'})
           }

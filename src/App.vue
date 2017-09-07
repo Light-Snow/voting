@@ -2,10 +2,11 @@
   <div id="app" v-wechat-title="myTitle">
     <!--<img src="./assets/logo.png">-->
     <!--<router-view v-wechat-title="myTitle"></router-view>-->
-    <keep-alive>
-      <router-view v-if="$route.meta.isKeepAlive"></router-view>
-    </keep-alive>
-    <router-view v-if="!$route.meta.isKeepAlive"></router-view>
+    <!--<keep-alive>-->
+      <!--<router-view v-if="$route.meta.isKeepAlive"></router-view>-->
+    <!--</keep-alive>-->
+    <!--<router-view v-if="!$route.meta.isKeepAlive"></router-view>-->
+    <router-view></router-view>
   </div>
 </template>
 
@@ -38,5 +39,6 @@
     width:100%; height:100%;
     /*overflow-y: auto;*/
   }
+  [v-cloak]{ display: none; }
 
 </style>

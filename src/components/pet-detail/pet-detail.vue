@@ -148,7 +148,6 @@
           if (res.data.status === '1') {
             let wxInfo = res.data.data
             this.userOpenId = wxInfo.openId
-            this.getPetDetail()
             this.getPetDetailVisit() // 作品详情的访问量
           } else if (res.data.status === '-1') {
             this.$router.replace({name: 'Failure'})
@@ -245,6 +244,7 @@
           petId: this.petId,
           voterOpenId: this.userOpenId
         }).then((res) => {
+//          alert(res.data.status)
           if (res.data.status === '1') {
             console.log(res.data)
             this.petDetail = res.data.data.petDetail
@@ -343,9 +343,12 @@
         }).then((res) => {
           console.log(res.data)
           if (res.data.status === '1') {
+            this.getPetDetail() // 进入作品详情
 //            console.log(res.data)
           } else if (res.data.status === '-1') {
             this.$router.replace({name: 'Failure'})
+          } else {
+            this.getPetDetail() // 进入作品详情
           }
         }).catch((error) => {
           console.log(error)
@@ -403,7 +406,7 @@
         }
       }
       .wei-name{
-        width 80%; margin 0 auto; font-size 28px;/*px*/ color #fff; line-height 70px; text-align center;
+        width 80%; height 70px; margin 0 auto; font-size 28px;/*px*/ color #fff; line-height 70px; text-align center;
         no-wrap()
       }
     }
@@ -442,18 +445,19 @@
           background-size 540px 260px;
         }
         p{
+          min-height 64px;
           padding 0 0 18px 0
           font-size 26px;/*px*/ color #ff895b; line-height 46px;
           word-break : break-all;
         }
       }
       .video-box{
-        width 100%;
+        position relative;
+        width 100%; min-height 190px; height auto;
         /*height 190px;*/
         border 2px solid #ffd964;/*px*/
         margin-bottom 20px;
         video{
-          position relative; z-index 1;
           display block
           width 100%; height 100%;
           /*background:transparent url('../../assets/images/gou.jpg') 50% 50% no-repeat;*/
