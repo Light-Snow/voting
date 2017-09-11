@@ -75,9 +75,13 @@
       }
     },
     mounted() {
+      this.getActivityInfo()
       this.$nextTick(() => {
 //        this.$refs.searchInput.focus()
       })
+    },
+    activated () {
+      this.getActivityInfo() // 获取活动信息
     },
     computed: {
       isLoadMore() {

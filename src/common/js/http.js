@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import { Indicator } from 'mint-ui'
+import { Toast } from 'mint-ui'
 /**
  * get请求
  * @param  {String} options.server 服务器域名
@@ -63,10 +63,18 @@ const _post = (api, params) => {
     // 关闭  loading图片消失
     // Indicator.close()
     // axiosDate = new Date()
+    let instance = Toast('数据请求失败')
+    setTimeout(() => {
+      instance.close()
+    }, 2000)
     return Promise.reject(errorRes)
   })
   .catch((error) => {
 //    console.log('axios.post[catch]: ', error)
+    let instance = Toast('数据请求失败')
+    setTimeout(() => {
+      instance.close()
+    }, 2000)
     return Promise.reject(error)
   })
 }

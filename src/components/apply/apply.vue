@@ -109,7 +109,7 @@
       </div>
       <div class="tip-box">
         <p>上传宠物视频或图片（{{totalFileNum}}/5）</p>
-        <p><span>(网络颠簸，建议单个附件不超过5M)</span></p>
+        <p><span>(网络颠簸，请上传时控制单个图片不超过5M，视频不超过50M)</span></p>
       </div>
     </div>
 
@@ -127,6 +127,7 @@
     data () {
       return {
         notEdit: false,
+        applying: false, // 发布作品中
         petId: '', // 宠物作品Id
         activityIntroduceText: '', // 活动文案
         activityId: '', // 活动Id
@@ -400,32 +401,37 @@
             userNickname: this.userNickName
           }
           console.log(params)
-          commonApi.postApi('/pet/api/pet.do', params).then((res) => {
-            console.log(res.data)
-            if (res.data.status === '1') {
-              Toast('发布成功')
-              this.$router.replace({name: 'ApplySuccess'})
-            } else if ((res.data.status === '2')) {
-              Toast('验证码不正确')
-            } else if ((res.data.status === '3')) {
-              Toast('手机号和验证码不一致')
-            } else if ((res.data.status === '4')) {
-              Toast('图片或者视频上传不够5个')
-            } else if ((res.data.status === '5')) {
-              Toast('验证码失效')
-            } else if ((res.data.status === '6')) {
-              Toast('手机验证码信息为空')
-            } else if ((res.data.status === '7')) {
-              Toast('作品已存在，请不要重复添加')
-              this.$router.replace({name: 'Home'})
-            } else if (res.data.status === '-1') {
-              this.$router.replace({name: 'Failure'})
-            } else {
-              Toast('发布失败')
-            }
-          }).catch((error) => {
-            console.log(error)
-          })
+          if (!this.applying) {
+            this.applying = true
+            commonApi.postApi('/pet/api/pet.do', params).then((res) => {
+              this.applying = false
+              console.log(res.data)
+              if (res.data.status === '1') {
+                Toast('发布成功')
+                this.$router.replace({name: 'ApplySuccess'})
+              } else if ((res.data.status === '2')) {
+                Toast('验证码不正确')
+              } else if ((res.data.status === '3')) {
+                Toast('手机号和验证码不一致')
+              } else if ((res.data.status === '4')) {
+                Toast('图片或者视频上传不够5个')
+              } else if ((res.data.status === '5')) {
+                Toast('验证码失效')
+              } else if ((res.data.status === '6')) {
+                Toast('手机验证码信息为空')
+              } else if ((res.data.status === '7')) {
+                Toast('作品已存在，请不要重复添加')
+                this.$router.replace({name: 'Home'})
+              } else if (res.data.status === '-1') {
+                this.$router.replace({name: 'Failure'})
+              } else {
+                Toast('发布失败')
+              }
+            }).catch((error) => {
+              this.applying = false
+              console.log(error)
+            })
+          }
         }
       },
       handleRemovePic (file) {
@@ -684,7 +690,8 @@
         p{
           font-size 28px; color #ff6631; text-align center; line-height 40px;
           span{
-            font-size 24px; color rgba(0,0,0,0.6);line-height 40px;
+            padding 0 40px;
+            font-size 24px; color rgba(0,0,0,0.6);line-height 40px; text-align center
           }
         }
       }

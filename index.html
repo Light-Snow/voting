@@ -2,11 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <!--<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">-->
+    <!--<meta name="viewport"-->
+          <!--content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
     <meta name="flexible" content="initial-dpr=1" />
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta http-equiv="Cache-Control" name="no-cache" />
+    <!--no-cache:不缓存--><!--no-store:缓存但不存档-->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--忽略页面中的数字识别为电话，忽略email识别,去除Android平台中对邮箱地址的识别-->
+    <meta content="telephone=no,email=no" name="format-detection" />
+    <!--windows phone 点击无高光-->
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--QQ强制竖屏-->
+    <meta name="x5-orientation" content="portrait">
     <title>麦田幸福社区萌宠大赛</title>
     <script src="/static/js/flexible.js"></script>
     <script  type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=d6zGANUDmor3AVuE7Iy34UCY" ></script>
@@ -15,5 +25,9 @@
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script>
+//      window.addEventListener('touchstart', function(e) { e.preventDefault() })
+//      window.addEventListener('touchmove', function(e) { e.preventDefault() })
+    </script>
   </body>
 </html>

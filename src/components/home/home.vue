@@ -8,17 +8,18 @@
         <div class="search-icon"></div>
       </router-link>
       <div class="roll">
-        <span>{{activityIntroduceText}}</span>
-        <!--<marquee  behavior="" scrollAmount="5" direction="left">-->
-        <!--麦田社区评选萌宠活动开始了，参加活动有礼物相送哦～-->
-        <!--</marquee>-->
+        <!--<span>{{activityIntroduceText}}</span>-->
+        <marquee  behavior="" scrollAmount="5" direction="left">
+          <span>{{activityIntroduceText}}</span>
+          <!--麦田社区评选萌宠活动开始了，参加活动有礼物相送哦～-->
+        </marquee>
       </div>
     </div>
     <div class="list-box">
       <div class="list-tab clearFix">
         <div class="type-list">
           <div class="checked" @click="toggleList">{{typeName}}<i></i></div>
-          <ul v-show="typeList" v-cloak>
+          <ul v-show="typeList">
             <li v-for="(type,index) in typeListName" @click="checkType(index)" :class="typeName===type.name?'active':''">{{type.name}}</li>
           </ul>
         </div>
@@ -30,44 +31,49 @@
           <span v-else class="applied"></span>
         </div>
       </div>
-      <mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange" ref="loadmore">
-        <ul class="animal-list clearFix"
-            v-infinite-scroll="loadMore"
-            infinite-scroll-disabled="loading"
-            infinite-scroll-distance="40"
-            :infinite-scroll-immediate-check="isLoadMore"
-        >
-          <li v-for="(item, index) in petList">
-            <div  class="animal-info" @click="goPetDetail(item.id,item.joinNumber)">
-              <i class="flag" :class="{'wang':item.belongTag==='1','miao': item.belongTag==='2'}"></i>
-              <span class="petTopPic">
+      <ul class="animal-list clearFix"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-disabled="loading"
+          infinite-scroll-distance="40"
+          :infinite-scroll-immediate-check="isLoadMore"
+          v-show="petList.length > 0"
+      >
+        <li v-for="(item, index) in petList">
+          <div  class="animal-info" @click="goPetDetail(item.id,item.joinNumber)">
+            <i class="flag" :class="{'wang':item.belongTag==='1','miao': item.belongTag==='2'}"></i>
+            <span class="petTopPic">
                 <img v-lazy="'/pet/'+item.petTopPic"  alt="">
               </span>
-              <p>
-                <span class="num">{{item.joinNumber}}号</span>
-                <span class="poll">{{item.voteNumber}}票</span>
-              </p>
-            </div>
-            <!--<router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">-->
-            <!--</router-link>-->
-            <template v-if="item.id===votedPetID||item.dayVisitFlag==='0'">
-              <div class="vote-btn voted" ></div>
-            </template>
-            <template v-else>
-              <div  class="vote-btn vote"  @click="votePet(item.id,item)"></div>
-            </template>
-          </li>
-        </ul>
-        <p v-show="loading" class="page-infinite-loading">
-          <mt-spinner type="fading-circle"></mt-spinner>
-          <br>加载中...
-        </p>
-        <p v-show="noMore" class="page-infinite-loading">
-          数据已加载完
-        </p>
-      </mt-loadmore>
+            <p>
+              <span class="num">{{item.joinNumber}}号</span>
+              <span class="poll">{{item.voteNumber}}票</span>
+            </p>
+          </div>
+          <!--<router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">-->
+          <!--</router-link>-->
+          <template v-if="item.id===votedPetID||item.dayVisitFlag==='0'">
+            <div class="vote-btn voted" ></div>
+          </template>
+          <template v-else>
+            <div  class="vote-btn vote"  @click="votePet(item.id,item)"></div>
+          </template>
+        </li>
+      </ul>
+      <p v-show="loading" class="page-infinite-loading">
+        <mt-spinner type="fading-circle"></mt-spinner>
+        <br>加载中...
+      </p>
+      <p v-show="noMore" class="page-infinite-loading">
+         数据已加载完
+      </p>
+      <!--<div class="load-more-box">-->
+        <!--<mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange"-->
+                     <!--ref="loadmore"-->
+                     <!--:auto-fill="isFill"-->
+                     <!--v-cloak>-->
+        <!--</mt-loadmore>-->
+      <!--</div>-->
     </div>
-
     <tab></tab>
   </div>
 </template>
@@ -82,6 +88,7 @@
     data () {
       return {
         msg: '首页',
+        isFill: true,
         activityId: '', // 活动Id
         activityExpire: false, // 活动到期
         activityIntroduceText: '', // 活动文案
@@ -108,22 +115,19 @@
         loading: false, // 是否要执行滚动加载
         votedPetID: '', // 已投票的id
         voteStatus: false,
-        voting: false // 是否时投票中
+        voting: false, // 是否时投票中
+        listGetting: false
       }
     },
     mounted() {
-      this.getOpenId() // 获取openId
-      this.getActivityInfo() // 获取活动信息
       this.$nextTick(function () {
+        this.getOpenId() // 获取openId
+        this.getActivityInfo() // 获取活动信息
         this._getPetList()
       })
     },
     activated() {
-      this.getOpenId() // 获取openId
-      this.getActivityInfo() // 获取活动信息
-      this.$nextTick(function () {
-        this._getPetList()
-      })
+      alert('333')
     },
     computed: {
       isLoadMore() {
@@ -132,9 +136,10 @@
     },
     methods: {
       goPetDetail(pid, num) {
-        if (this.topStatus === 'pull') {
-          this.$router.push({name: 'PetDetail', params: { pid: pid, num: num }})
-        }
+        this.$router.push({name: 'PetDetail', params: { pid: pid, num: num }})
+//        if (this.topStatus === 'pull') {
+//          this.$router.push({name: 'PetDetail', params: { pid: pid, num: num }})
+//        }
       },
       goApply() {
         if (!this.activityExpire) {
@@ -335,36 +340,42 @@
           return false
         }
         console.log(this.currentPage, this.rankType)
-        commonApi.postApi('/pet/api/pet.do', {
-          method: this.rankType,
-          belongTag: this.belongTag, // 宠物标签（1代表汪星人，2代表喵星人，3代表其它,全部为空）
-          start: this.currentPage, // 起始页
-          pageSize: this.pageSize, // 页显示数
-          voterOpenId: this.userOpenId,
-          orderFlag: this.isHot
-        }).then((res) => {
-          console.log(res.data)
-          if (res.data.status === '-1') {
-            this.$router.replace({name: 'Failure'})
-          } else if (res.data.status === '1') {
-            if (res.data.data.length < this.pageSize) {
+        if (!this.listGetting) {
+          this.listGetting = true
+          commonApi.postApi('/pet/api/pet.do', {
+            method: this.rankType,
+            belongTag: this.belongTag, // 宠物标签（1代表汪星人，2代表喵星人，3代表其它,全部为空）
+            start: this.currentPage, // 起始页
+            pageSize: this.pageSize, // 页显示数
+            voterOpenId: this.userOpenId,
+            orderFlag: this.isHot
+          }).then((res) => {
+            console.log(res.data)
+            if (res.data.status === '-1') {
+              this.listGetting = false
+              this.$router.replace({name: 'Failure'})
+            } else if (res.data.status === '1') {
+              if (res.data.data.length < this.pageSize) {
+                this.loading = false // 隐藏加载图标
+                this.noMore = true
+                console.log(this.loading, this.noMore)
+              }
+              if (res.data.data.length > 0) {
+                this.currentPage = ++this.currentPage
+              }
+              console.log(this.currentPage)
+              let petList = res.data.data
+              this.petList = this.petList.concat(petList)
               this.loading = false // 隐藏加载图标
-              this.noMore = true
-              console.log(this.loading, this.noMore)
-            }
-            if (res.data.data.length > 0) {
-              this.currentPage = ++this.currentPage
-            }
-            console.log(this.currentPage)
-            let petList = res.data.data
-            this.petList = this.petList.concat(petList)
-            this.loading = false // 隐藏加载图标
-            console.log(petList)
+              console.log(petList)
+              this.listGetting = false
 //            alert(JSON.stringify(petList))
-          }
-        }).catch((error) => {
-          console.log(error)
-        })
+            }
+          }).catch((error) => {
+            this.listGetting = false
+            console.log(error)
+          })
+        }
       },
       _clearData() { // 清除数据
         this.currentPage = 0
@@ -394,7 +405,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
   .page-infinite-loading {
     text-align: center;
     /*height: 50px;*/
@@ -408,8 +418,12 @@
       margin-right: 5px;
     }
   }
+  .load-more-box{
+    width 100%; min-height 500px;
+  }
   .home
-    width 100%; min-height 100%; background-color #fff2bb;
+    width 100%; min-height 100%;
+    background-color #fff2bb;
     .top-box
       position relative
       width 100%
@@ -467,11 +481,11 @@
           -moz-text-shadow: #fff2bb 2px 0 0,#fff2bb 0 2px 0,#fff2bb -2px 0 0,#fff2bb 0 -2px 0;
           filter: Glow(color=#fff2bb, strength=2);
           white-space:nowrap;
-          animation: rowleft 10s linear 0 infinite normal;
-          -webkit-animation: rowleft 10s  linear 0 infinite normal;
-          -moz-animation: rowleft 10s  linear 0 infinite normal;
-          -ms-animation: rowleft 10s  linear 0 infinite normal;
-          -o-animation: rowleft 10s  linear 0 infinite normal;
+          /*animation: rowleft 10s linear 0 infinite normal;*/
+          /*-webkit-animation: rowleft 10s  linear 0 infinite normal;*/
+          /*-moz-animation: rowleft 10s  linear 0 infinite normal;*/
+          /*-ms-animation: rowleft 10s  linear 0 infinite normal;*/
+          /*-o-animation: rowleft 10s  linear 0 infinite normal;*/
     .list-box
       width 100%
       padding 0 0 125px 0

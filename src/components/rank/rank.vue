@@ -71,10 +71,13 @@
       }
     },
     mounted() {
-      this.getActivityInfo() // 获取活动信息
       this.$nextTick(function () {
+        this.getActivityInfo() // 获取活动信息
         this.getRankList()
       })
+    },
+    activated () {
+      this.getActivityInfo() // 获取活动信息
     },
     computed: {
       isLoadMore() {

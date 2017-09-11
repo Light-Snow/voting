@@ -27,7 +27,7 @@
   import ajax from 'common/js/file-ajax'
   import {oneOf} from 'common/js/assist'
   import Emitter from 'common/js/emitter'
-  import {MessageBox} from 'mint-ui'
+//  import {MessageBox} from 'mint-ui'
   export default {
     name: 'file-upload',
     mixins: [ Emitter ],
@@ -183,54 +183,24 @@
         })
       },
       upload (file) {
-        if (this.name === 'petVideo') {
-          MessageBox.confirm('视频文件最大支持50MB，请确认后再上传').then(action => {
-            console.log(action)
-            if (action === 'confirm') {
-              if (!this.beforeUpload) {
-                return this.post(file)
-              }
-              const before = this.beforeUpload(file)
-              if (before && before.then) {
-                before.then(processedFile => {
-                  if (Object.prototype.toString.call(processedFile) === '[object File]') {
-                    this.post(processedFile)
-                  } else {
-                    this.post(file)
-                  }
-                }, () => {
-                  // this.$emit('cancel', file);
-                })
-              } else if (before !== false) {
-                this.post(file)
-              } else {
-                // this.$emit('cancel', file);
-              }
+        if (!this.beforeUpload) {
+          return this.post(file)
+        }
+        const before = this.beforeUpload(file)
+        if (before && before.then) {
+          before.then(processedFile => {
+            if (Object.prototype.toString.call(processedFile) === '[object File]') {
+              this.post(processedFile)
+            } else {
+              this.post(file)
             }
-          }).catch(action => {
-            console.log(action)
-            return false
-          })
-        } else {
-          if (!this.beforeUpload) {
-            return this.post(file)
-          }
-          const before = this.beforeUpload(file)
-          if (before && before.then) {
-            before.then(processedFile => {
-              if (Object.prototype.toString.call(processedFile) === '[object File]') {
-                this.post(processedFile)
-              } else {
-                this.post(file)
-              }
-            }, () => {
-              // this.$emit('cancel', file);
-            })
-          } else if (before !== false) {
-            this.post(file)
-          } else {
+          }, () => {
             // this.$emit('cancel', file);
-          }
+          })
+        } else if (before !== false) {
+          this.post(file)
+        } else {
+          // this.$emit('cancel', file);
         }
       },
       post (file) {
