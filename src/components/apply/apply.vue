@@ -95,7 +95,7 @@
                        :on-format-error="handleFormatErrorVideo"
                        :on-exceeded-size="handleMaxSizeVideo"
                        :before-upload="handleBeforeUploadVideo"
-                       action="http://pet.maitian.cn/pet/api/pet.do?method=photoVideoUpLoad"
+                       action="/pet/api/pet.do?method=photoVideoUpLoad"
                        :accept="videoAccept"
                        :format="['mov','mp4']"
                        name="petVideo"
@@ -176,7 +176,6 @@
     },
     methods: {
       repeatGetFile() {
-        console.log('11111')
         this.petPicList = this.$refs.uploadPic.fileList
         this.petVideoList = this.$refs.uploadVideo.fileList
       },
@@ -259,7 +258,6 @@
             petId: this.petId,
             voterOpenId: this.userOpenId
           }
-//          alert(JSON.stringify(params))
           commonApi.postApi('/pet/api/pet.do', params).then((res) => {
             console.log(res.data)
 //            alert(res.data.status)
@@ -270,16 +268,17 @@
               this.phone = petDetail.mobile || ''
               this.petIntroduce = petDetail.introduce || '这是我家爱宠，喜欢它，就投票吧！'
               this.belongTag = petDetail.belongTag || '3'
-              let petPicList = res.data.data.petPicList // 图片列表
-              console.log(petPicList)
-              if (petPicList.length > 0) {
-                this.defaultPicList = petPicList
-                for (let i = 0; i < petPicList.length; i++) {
-                  _this.defaultPicList[i].status = 'finished'
+              if (res.data.data.petPicList) {
+                let petPicList = res.data.data.petPicList // 图片列表
+                console.log(petPicList)
+                if (petPicList.length > 0) {
+                  this.defaultPicList = petPicList
+                  for (let i = 0; i < petPicList.length; i++) {
+                    _this.defaultPicList[i].status = 'finished'
+                  }
                 }
               }
-              console.log(this.defaultPicList)
-              console.log(this.$refs.uploadPic.fileList)
+//              console.log(this.defaultPicList)
               if (res.data.data.petVideoList) {
                 let petVideoList = res.data.data.petVideoList
                 if (petVideoList.length > 0) {
@@ -373,8 +372,8 @@
           this.verifyPhone = '0'
           Toast('请检查手机号是否输入正确')
           return false
-        } else if (this.totalFileNum < 5) {
-          Toast('图片和视频文件必须达到5个')
+        } else if (this.petPicList.length < 1) {
+          Toast('亲，至少上传一张宠物图片才能参赛哦')
           return false
         } else if (this.picUploading) {
           Toast('请将图片上传完毕后再发布作品')
@@ -383,6 +382,12 @@
           Toast('请将视频上传完毕后再发布作品')
           return false
         } else {
+          for (let i = 0; i < this.petPicList.length; i++) {
+            if (this.petPicList[i].status !== 'finished') { // 图片是否上传结束
+              Toast('请将图片上传完毕后再发布作品')
+              return false
+            }
+          }
           let applyPicList = JSON.stringify(this.petPicList)
           let applyVideoList = ''
           if (this.petVideoList.length > 0) {
@@ -414,11 +419,13 @@
               } else if ((res.data.status === '3')) {
                 Toast('手机号和验证码不一致')
               } else if ((res.data.status === '4')) {
-                Toast('图片或者视频上传不够5个')
+                // 修改作品为空/ 活动下线
+                this.$router.replace({name: 'ActivityEnd'})
               } else if ((res.data.status === '5')) {
                 Toast('验证码失效')
               } else if ((res.data.status === '6')) {
-                Toast('手机验证码信息为空')
+                // 手机验证码信息为空
+                Toast('请检查验证码输入是否正确')
               } else if ((res.data.status === '7')) {
                 Toast('作品已存在，请不要重复添加')
                 this.$router.replace({name: 'Home'})
@@ -438,33 +445,25 @@
         // 从 upload 实例删除数据
         const fileList = this.$refs.uploadPic.fileList
         this.$refs.uploadPic.fileList.splice(fileList.indexOf(file), 1)
-//          this.petPicList.splice(this.petPicList.indexOf(file), 1)
-        console.log(this.petPicList)
+//        console.log(this.petPicList)
         Toast('删除图片成功')
       },
       handleRemoveVideo (file) {
         // 从 upload 实例删除数据
         const fileList = this.$refs.uploadVideo.fileList
         this.$refs.uploadVideo.fileList.splice(fileList.indexOf(file), 1)
-//          this.petVideoList.splice(this.petVideoList.indexOf(file), 1)
-        console.log(this.petVideoList)
+//        console.log(this.petVideoList)
         Toast('删除视频成功')
       },
       handleSuccess (res, file, fileList) {
-        this.picUploading = false // 图片上传结束
         this.petPicList = fileList
-//        console.log(fileList)
-//        console.log(this.petPicList)
-//        console.log(this.petVideoList)
+        this.picUploading = false // 图片上传结束
       },
       handleSuccessVideo (res, file, fileList) {
         this.videoUploading = false // 视频上传结束
         this.petVideoList = fileList
-        console.log(this.petVideoList)
-        // 因为上传过程为实例，这里模拟添加 url
       },
       handleFormatErrorPic (file) {
-        this.picUploading = false // 图片上传结束
         Toast('文件格式不正确,请上传 jpg 或 png 格式的图片')
       },
       handleFormatErrorVideo (file) {
@@ -472,7 +471,6 @@
         Toast('文件格式不正确,请上传 mov 或 mp4 格式的视频')
       },
       handleMaxSize (file) {
-        this.picUploading = false // 图片上传结束
         Toast('图片文件太大，不能超过 5M')
       },
       handleMaxSizeVideo (file) {

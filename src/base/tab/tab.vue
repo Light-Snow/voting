@@ -1,20 +1,22 @@
 <template>
-  <div class="tab-box">
-    <div class="tab">
-      <router-link tag="div" class="tab-item" to="/home">
-        <span class="tab-link home"></span>
-      </router-link>
-      <router-link tag="div" class="tab-item" to="/rank">
-        <span class="tab-link rank"></span>
-      </router-link>
-      <router-link tag="div" class="tab-item" to="/rule">
-        <span class="tab-link rule"></span>
-      </router-link>
-      <router-link tag="div" class="tab-item" to="/mine">
-        <span class="tab-link mine"></span>
-      </router-link>
+  <div class="bottom">
+    <div class="tab-box">
+      <div class="tab">
+        <router-link tag="div" class="tab-item" to="/home">
+          <span class="tab-link home"></span>
+        </router-link>
+        <router-link tag="div" class="tab-item" to="/rank">
+          <span class="tab-link rank"></span>
+        </router-link>
+        <router-link tag="div" class="tab-item" to="/rule">
+          <span class="tab-link rule"></span>
+        </router-link>
+        <router-link tag="div" class="tab-item" to="/mine">
+          <span class="tab-link mine"></span>
+        </router-link>
+      </div>
+      <img class="logo" src="../../assets/images/bottom_icon.png"/>
     </div>
-    <img class="logo" src="../../assets/images/bottom_icon.png"/>
   </div>
 </template>
 
@@ -24,8 +26,15 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
-  .tab-box
+  .bottom
     position: fixed
+    left:0
+    bottom : 0
+    z-index 99
+    width :100%
+    height: 132px
+  .tab-box
+    position: absolute
     left:0
     bottom : 0
     z-index 99

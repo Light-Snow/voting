@@ -1,7 +1,6 @@
 <template>
   <div class="petDetail">
     <div class="pet-top">
-      <router-link class="go-home" :to="{name: 'Home'}">活动首页</router-link>
       <div class="head">
         <img :src="headImgUrl" alt="">
       </div>
@@ -40,9 +39,12 @@
         </div>
       </div>
     </div>
-    <div class="pet-btn">
-      <span class="voted" v-if="petDetail.id===votedPetID || petDetail.dayVisitFlag==='0'"></span>
-      <span class="vote" v-else @click="votePet"></span>
+    <div class="btn-box">
+      <router-link class="go-home" :to="{name: 'Home'}"></router-link>
+      <div class="pet-btn">
+        <span class="voted" v-if="petDetail.id===votedPetID || petDetail.dayVisitFlag==='0'"></span>
+        <span class="vote" v-else @click="votePet"></span>
+      </div>
     </div>
     <div class="pic-preview" v-show="picPreview" @click="closePreview">
       <img :src="previewImg" alt="">
@@ -150,9 +152,9 @@
             this.userOpenId = wxInfo.openId
             this.getPetDetailVisit() // 作品详情的访问量
           } else if (res.data.status === '-1') {
-            this.$router.replace({name: 'Failure'})
+//            this.$router.replace({name: 'Failure'})
           } else if (res.data.status === '0') {
-            this.$router.replace({name: 'Failure'})
+//            this.$router.replace({name: 'Failure'})
           }
         }).catch((error) => {
           console.log(error)
@@ -386,17 +388,6 @@
       background-repeat no-repeat
       background-position top center
       background-size 100% 100%
-      .go-home{
-        position absolute
-        left 40px
-        top 16px
-        z-index 2
-        width 120px
-        height 50px
-        border-radius 8px;/*px*/ border 2px solid #25151b;/*px*/
-        font-size 24px;/*px*/ color #fff; text-align center; line-height 48px;
-        background-color #32a1ff
-      }
       .head{
         width 130px; height 130px; margin 0 auto;
         border-radius 50%;  overflow hidden; border 4px solid #fff;/*px*/
@@ -431,7 +422,7 @@
       }
     }
     .pet-con{
-      width 100%; padding 0 7%;
+      width 100%; padding 0 7%; min-height 500px;
       background-image url("../../assets/images/introduce_bg.png")
       background-repeat no-repeat
       background-position top center
@@ -498,14 +489,27 @@
         }
       }
     }
-    .pet-btn{
+    .btn-box{
       position fixed
       left 0; bottom 0; z-index 10;
-      width 100%; height 90px; padding-bottom 10px;
+      width 100%; height 90px; padding 0 55px;
+      overflow hidden;
+    }
+    .go-home{
+      float left;
+      display block
+      width 320px;
+      height 80px
+      background-image url("../../assets/images/go_home.png")
+      background-repeat no-repeat
+      background-size 100% 100%
+    }
+    .pet-btn{
+      float right;
+      width 320px; height 80px;
       span{
         display block;
-        width 520px; height 80px; margin 0 auto;
-
+        width 320px; height 80px; margin 0 auto;
         &.vote{
           background: url('../../assets/images/pet_sprites.png') -10px -10px;
           background-repeat no-repeat

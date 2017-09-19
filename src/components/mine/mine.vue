@@ -42,7 +42,7 @@
         </div>
         <div class="video-box" v-show="petVideoList.length>0">
           <review-mask v-if="!isApprove"></review-mask>
-          <video v-for="video in petVideoList" ref="video" width="100%"  :src="'/pet/'+video.videoAddress"  controls :poster="'/pet/'+video.videoFrame">
+          <video v-for="video in petVideoList" ref="video" width="100%"  controls :poster="'/pet/'+video.videoFrame">
             <source :src="'/pet/'+video.videoAddress" :type="video.videoType">
           </video>
         </div>

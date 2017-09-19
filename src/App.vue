@@ -40,5 +40,27 @@
     /*overflow-y: auto;*/
   }
   [v-cloak]{ display: none; }
+  #loading{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #fff;
+  }
+  #loading:before{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 24px;
+    width: 24px;
+    margin-top: -12px;
+    margin-left: -12px;
+    background-color: #fff;
+    background: url("/static/loading.gif") no-repeat;
+    background-size: 100% 100%;
+  }
 
 </style>

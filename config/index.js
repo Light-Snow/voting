@@ -43,8 +43,8 @@ module.exports = {
       //   }
       // }
       // ,
-      // '/pet/api/pet.do': { // 模拟
-      //   target: 'http://127.0.0.1:8080/pet/api/pet.do',
+      // '/pet/api/pet.do': { // 测试
+      //   target: 'http://pet.imtfc.com/pet/api/pet.do',
       //   changeOrigin: true,
       //   pathRewrite: {
       //     '^/pet/api/pet.do': ''
