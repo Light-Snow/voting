@@ -344,6 +344,8 @@
                 this.timer()
               } else if (res.data.status === '2') {
                 Toast('您今日发送短信条数已超过10条')
+              } else if (res.data.status === '0') {
+                Toast('验证码发送失败')
               } else if (res.data.status === '-1') {
                 this.$router.replace({name: 'Failure'})
               }
@@ -464,6 +466,7 @@
         this.petVideoList = fileList
       },
       handleFormatErrorPic (file) {
+        this.picUploading = false // 图片上传结束
         Toast('文件格式不正确,请上传 jpg 或 png 格式的图片')
       },
       handleFormatErrorVideo (file) {
@@ -471,6 +474,7 @@
         Toast('文件格式不正确,请上传 mov 或 mp4 格式的视频')
       },
       handleMaxSize (file) {
+        this.picUploading = false // 图片上传结束
         Toast('图片文件太大，不能超过 5M')
       },
       handleMaxSizeVideo (file) {

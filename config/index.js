@@ -43,8 +43,15 @@ module.exports = {
       //   }
       // }
       // ,
-      // '/pet/api/pet.do': { // 测试
+      // '/pet/api/pet.do': {
       //   target: 'http://pet.imtfc.com/pet/api/pet.do',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/pet/api/pet.do': ''
+      //   }
+      // }
+      // '/pet/api/pet.do': { // 正式
+      //   target: 'http://pet.maitian.com/pet/api/pet.do',
       //   changeOrigin: true,
       //   pathRewrite: {
       //     '^/pet/api/pet.do': ''

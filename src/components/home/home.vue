@@ -1,78 +1,80 @@
 <template>
   <div class="home">
-    <div class="top-box">
-      <img class="banner" :src="'/pet/'+ headPic" alt="">
-      <!--<a href="javascript:;" class="we-chat"></a>-->
-      <!--<span v-show="subscribe === 'true'" class="attention">已关注</span>-->
-      <router-link  class="search-box" to="/search">
-        <div class="search-icon"></div>
-      </router-link>
-      <div class="roll">
-        <!--<span>{{activityIntroduceText}}</span>-->
-        <marquee  behavior="" scrollAmount="5" direction="left">
-          <span>{{activityIntroduceText}}</span>
-          <!--麦田社区评选萌宠活动开始了，参加活动有礼物相送哦～-->
-        </marquee>
-      </div>
-    </div>
-    <div class="list-box">
-      <div class="list-tab clearFix">
-        <div class="type-list">
-          <div class="checked" @click="toggleList">{{typeName}}<i></i></div>
-          <ul v-show="typeList">
-            <li v-for="(type,index) in typeListName" @click="checkType(index)" :class="typeName===type.name?'active':''">{{type.name}}</li>
-          </ul>
-        </div>
-        <div class="tab-icon" :class="rankType==='findPetNewList'?'active':''" @click="checkRankType('findPetNewList')">最新</div>
-        <div class="tab-icon" :class="rankType==='findPetHotList'?'active':''" @click="checkRankType('findPetHotList')">最热</div>
-        <div class="apply-box">
-          <!--<router-link v-if="!isApply"  class="apply" to="/apply"></router-link>-->
-          <div v-if="!isApply"  class="apply" to="/apply" @click="goApply"></div>
-          <span v-else class="applied"></span>
+    <div class="home-main">
+      <div class="top-box">
+        <img class="banner" :src="'/pet/'+ headPic" alt="">
+        <!--<a href="javascript:;" class="we-chat"></a>-->
+        <!--<span v-show="subscribe === 'true'" class="attention">已关注</span>-->
+        <router-link  class="search-box" to="/search">
+          <div class="search-icon"></div>
+        </router-link>
+        <div class="roll">
+          <!--<span>{{activityIntroduceText}}</span>-->
+          <marquee  behavior="" scrollAmount="5" direction="left">
+            <span>{{activityIntroduceText}}</span>
+            <!--麦田社区评选萌宠活动开始了，参加活动有礼物相送哦～-->
+          </marquee>
         </div>
       </div>
-      <ul class="animal-list clearFix"
-          v-infinite-scroll="loadMore"
-          infinite-scroll-disabled="loading"
-          infinite-scroll-distance="40"
-          :infinite-scroll-immediate-check="isLoadMore"
-          v-show="petList.length > 0"
-      >
-        <li v-for="(item, index) in petList">
-          <div  class="animal-info" @click="goPetDetail(item.id,item.joinNumber)">
-            <i class="flag" :class="{'wang':item.belongTag==='1','miao': item.belongTag==='2'}"></i>
-            <span class="petTopPic">
+      <div class="list-box">
+        <div class="list-tab clearFix">
+          <div class="type-list">
+            <div class="checked" @click="toggleList">{{typeName}}<i></i></div>
+            <ul v-show="typeList">
+              <li v-for="(type,index) in typeListName" @click="checkType(index)" :class="typeName===type.name?'active':''">{{type.name}}</li>
+            </ul>
+          </div>
+          <div class="tab-icon" :class="rankType==='findPetNewList'?'active':''" @click="checkRankType('findPetNewList')">最新</div>
+          <div class="tab-icon" :class="rankType==='findPetHotList'?'active':''" @click="checkRankType('findPetHotList')">最热</div>
+          <div class="apply-box">
+            <!--<router-link v-if="!isApply"  class="apply" to="/apply"></router-link>-->
+            <div v-if="!isApply"  class="apply" to="/apply" @click="goApply"></div>
+            <span v-else class="applied"></span>
+          </div>
+        </div>
+        <ul class="animal-list clearFix"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="loading"
+            infinite-scroll-distance="40"
+            :infinite-scroll-immediate-check="isLoadMore"
+            v-show="petList.length > 0"
+        >
+          <li v-for="(item, index) in petList">
+            <div  class="animal-info" @click="goPetDetail(item.id,item.joinNumber)">
+              <i class="flag" :class="{'wang':item.belongTag==='1','miao': item.belongTag==='2'}"></i>
+              <span class="petTopPic">
                 <img v-lazy="'/pet/'+item.petTopPic"  alt="">
               </span>
-            <p>
-              <span class="num">{{item.joinNumber}}号</span>
-              <span class="poll">{{item.voteNumber}}票</span>
-            </p>
-          </div>
-          <!--<router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">-->
-          <!--</router-link>-->
-          <template v-if="item.id===votedPetID||item.dayVisitFlag==='0'">
-            <div class="vote-btn voted" ></div>
-          </template>
-          <template v-else>
-            <div  class="vote-btn vote"  @click="votePet(item.id,item)"></div>
-          </template>
-        </li>
-      </ul>
-      <p v-show="loading" class="page-infinite-loading">
-        <mt-spinner type="fading-circle"></mt-spinner>
-        <br>加载中...
-      </p>
-      <p v-show="noMore" class="page-infinite-loading">
-         数据已加载完
-      </p>
-      <!--<div class="load-more-box">-->
+              <p>
+                <span class="num">{{item.joinNumber}}号</span>
+                <span class="poll">{{item.voteNumber}}票</span>
+              </p>
+            </div>
+            <!--<router-link  class="animal-info" :to="{ name: 'PetDetail', params: { pid: item.id, num: item.joinNumber}}">-->
+            <!--</router-link>-->
+            <template v-if="item.id===votedPetID||item.dayVisitFlag==='0'">
+              <div class="vote-btn voted" ></div>
+            </template>
+            <template v-else>
+              <div  class="vote-btn vote"  @click="votePet(item.id,item)"></div>
+            </template>
+          </li>
+        </ul>
+        <p v-show="loading" class="page-infinite-loading">
+          <mt-spinner type="fading-circle"></mt-spinner>
+          <br>加载中...
+        </p>
+        <p v-show="noMore" class="page-infinite-loading">
+          数据已加载完
+        </p>
+        <!--<div class="load-more-box">-->
         <!--<mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange"-->
-                     <!--ref="loadmore"-->
-                     <!--:auto-fill="isFill"-->
-                     <!--v-cloak>-->
+        <!--ref="loadmore"-->
+        <!--:auto-fill="isFill"-->
+        <!--v-cloak>-->
         <!--</mt-loadmore>-->
-      <!--</div>-->
+        <!--</div>-->
+      </div>
     </div>
     <tab></tab>
   </div>
@@ -422,8 +424,17 @@
     width 100%; min-height 500px;
   }
   .home
-    width 100%; min-height 100%;
+    position relative
+    width 100%; height 100%;
     background-color #fff2bb;
+    .home-main
+      position fixed; top 0; left 0;
+      bottom 0; right 0;
+      width 100%;
+      /* 使之可以滚动 */
+      overflow-y: scroll;
+      /* 增加该属性，可以增加弹性 */
+      -webkit-overflow-scrolling: touch;
     .top-box
       position relative
       width 100%

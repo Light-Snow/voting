@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div class="btn-box">
+    <div class="btn-box" v-show="petPicList.length>0">
       <router-link class="go-home" :to="{name: 'Home'}"></router-link>
       <div class="pet-btn">
         <span class="voted" v-if="petDetail.id===votedPetID || petDetail.dayVisitFlag==='0'"></span>
